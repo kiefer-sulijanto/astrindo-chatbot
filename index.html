@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Astrindo Digital Approval AI</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: #cdd2d3b5;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: #fff;
+      border-right: 1px solid #ccc;
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      transition: transform 0.3s ease;
+      z-index: 100;
+      overflow-y: hidden;
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-100%);
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding: 18px 16px 8px 4px;
+    }
+
+    .sidebar-header h3 {
+      margin: 0;
+    }
+
+    .close-toggle {
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #333;
+      margin-right: -20px;
+    }
+
+    .sidebar p {
+      margin: 0.5rem 0;
+      cursor: pointer;
+    }
+
+    .main {
+      margin-left: 200px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      transition: margin-left 0.3s ease;
+    }
+
+    .main.collapsed {
+      margin-left: 0;
+    }
+
+    .header {
+      background: #ffffff;
+      font-size: 1.5rem;
+      border-bottom: 1px solid #ddd;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      z-index: 10;
+    }
+
+    .hamburger {
+      position: absolute;
+      left: 1rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .header-toggle {
+      display: block;
+    }
+
+    .main:not(.collapsed) .header-toggle {
+      display: none;
+    }
+
+    .logo-astrindo {
+      height: 70px;
+      position: absolute;
+      left: 3rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .user-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+
+    .wrapper {
+      height: calc(100vh - 140px); /* 70px header + 70px input kira-kira */
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 1rem;
+    }
+
+
+    .chat-scroll {
+      flex: 1;
+      overflow-y: auto;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .chat-container {
+      max-width: 700px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-scroll-container {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding-right: 8px; /* Memberikan ruang untuk scrollbar */
+      margin-right: -16px; /* Menggeser scrollbar ke kanan */
+    }
+
+
+    .message {
+      margin: 0.5rem 0;
+      padding: 0.75rem 1rem;
+      border-radius: 16px;
+      font-size: 1rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+      display: inline-block;
+    }
+
+    .bot {
+      background: #f0f0f0;
+      color: #333;
+      align-self: flex-start;
+      max-width: 80%;
+    }
+
+    .user {
+      background: #ffffff;
+      color: rgb(0, 0, 0);
+      align-self: flex-end;
+      max-width: 80%;
+    }
+
+    .user-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+    }
+
+
+    .input-container {
+      display: flex;
+      padding: 1rem;
+      background: #cdd2d3b5;
+    }
+
+    .input-inner {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+    }
+
+    .input-container input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .input-container button {
+      margin-left: 0.75rem;
+      padding: 0 1.5rem;
+      border: none;
+      background: rgb(97, 97, 97);
+      color: white;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .context-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #fff;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border-radius: 6px;
+      min-width: 120px;
+      z-index: 999;
+    }
+
+    .context-menu div {
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+
+    .context-menu div:hover {
+      background: #eee;
+    }
+
+    #deleteModal, #renameModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #2d2d2d;
+      color: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .modal-content button {
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .modal-content input {
+      width: 100%;
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #1e1e1e;
+      color: white;
+    }
+
+    /* Hover to reveal ••• */
+    .chat-item {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0rem;        /* 👉 Tambahkan padding kiri-kanan */
+      margin-bottom: 0.3rem;
+      border-radius: 999px;        /* 👉 Buat seperti pil (bulat penuh) */
+      white-space: nowrap;
+      cursor: pointer;
+      max-width: 100%;
+    }
+
+    .chat-item span {
+      font-size: 0.9rem;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: unset;
+      display: block;
+      max-width: 100%;
+    }
+
+    /* Saat hover baru tampilkan ... */
+    .chat-item:hover span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px; /* bisa kamu sesuaikan */
+    }
+
+
+    .chat-item:hover {
+      background-color: #f0f0f0;
+      border-radius: 6px;
+    }
+
+
+    .chat-options {
+      visibility: hidden;
+      color: #666;
+      font-weight: bold;
+    }
+
+    .chat-item:hover .chat-options {
+      visibility: visible;
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 60px; /* sesuaikan agar muncul di bawah ikon */
+      right: 10px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      z-index: 999;
+      width: 220px;
+      padding: 0.5rem 0;
+    }
+
+    .dropdown-item {
+      padding: 0.6rem 1rem;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    .dropdown-item:hover {
+      background-color: #f0f0f0;
+      cursor: default;
+    }
+
+
+    @media (max-width: 768px) {
+      .main {
+        margin-left: 0;
+      }
+      .header img {
+        left: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar hidden" id="sidebar">
+    <div class="sidebar-header">
+      <h3>Menu</h3>
+      <div class="close-toggle" onclick="toggleSidebar()">☰</div>
+    </div>
+    <p onclick="startNewChat()" style="margin-bottom: 1rem; font-weight: bold; display: flex; align-items: center;">📝 New Chat</p>
+    <p onclick="startSearchChat()" style="margin-bottom: 1rem; font-weight: bold; display: flex; align-items: center;">🕵️‍♀️ Search Chat</p>
+    <input type="text" id="searchInput" placeholder="Search chat..." style="margin-bottom: 0.5rem; padding: 0.4rem; display: none; border-radius: 5px; border: 1px solid #ccc;" oninput="filterChatHistory()" />
+    <div class="chat-scroll-container">
+    <p style="font-size: 0.85rem; font-weight: bold; color: #555; margin: 0 0 0.5rem;">Chats</p>
+    <div id="chatHistoryList"></div>
+</div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main collapsed" id="mainContent">
+    <div class="header">
+      <div class="hamburger header-toggle" onclick="toggleSidebar()">☰</div>
+      <img src="https://www.astrindo.co.id/astrindo.co.id/astweb/public/visitor/assets/img/logo-ast.png" alt="Astrindo Logo" class="logo-astrindo" onclick="startNewChat()" style="cursor: pointer;">
+      <span><strong>Astrindo Digital Approval</strong></span>
+      <img src="/chat2/public/user-icon.png" alt="User Icon" class="user-icon">
+        <div id="userDropdown" class="dropdown-menu" style="display: none;">
+        <div class="dropdown-item" id="userEmail"></div>
+        <div class="dropdown-item" id="userRole"></div>
+      </div>
+
+    </div>
+    <div class="wrapper">
+  <div class="chat-scroll" id="chatScroll">
+    <div class="chat-container" id="chatContainer">
+      <div class="message bot">👋 Hello! How can I assist you today?</div>
+    </div>
+  </div>
+</div>
+
+    <div class="input-container">
+      <div class="input-inner">
+        <input type="text" id="userInput" placeholder="Type your message..." autofocus />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div id="deleteModal">
+    <div class="modal-content">
+      <h3>Delete chat?</h3>
+      <p>This will delete <strong id="deleteChatName">this chat</strong>.</p>
+      <p style="font-size: 0.85rem; color: #aaa;">Note : You won't be able to see this chat anymore.</p>
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
+        <button onclick="closeDeleteModal()" style="background:#444; color:white;">Cancel</button>
+        <button onclick="confirmDeleteChat()" style="background:#d93025; color:white;">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RENAME MODAL -->
+  <div id="renameModal">
+    <div class="modal-content">
+      <h3>Rename chat</h3>
+      <input type="text" id="renameInput" />
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
+        <button onclick="closeRenameModal()" style="background:#444; color:white;">Cancel</button>
+        <button onclick="confirmRenameChat()" style="background:white; color:black;">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+const CHAT_HISTORY_KEY = 'astrindo_chat_history';
+const LAST_SESSION_KEY = 'astrindo_last_session';
+let chatSessionId = localStorage.getItem(LAST_SESSION_KEY) || Date.now().toString();
+document.getElementById("userInput").value = "";
+let chatHistory = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '{}');
+let deleteTargetSessionId = null;
+let renameTargetSessionId = null;
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('hidden');
+  document.getElementById('mainContent').classList.toggle('collapsed');
+}
+
+document.getElementById("userInput").addEventListener("keydown", function (e) {
+  const isRenameModalOpen = document.getElementById("renameModal").style.display === "flex";
+  const isDeleteModalOpen = document.getElementById("deleteModal").style.display === "flex";
+  if (e.key === "Enter" && !isRenameModalOpen && !isDeleteModalOpen) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+async function sendMessage() {
+  const inputField = document.getElementById("userInput");
+  const message = inputField.value.trim();
+  if (!message) return;
+
+  const last = chatHistory[chatSessionId]?.messages?.at(-1);
+  if (last?.sender === 'user' && last?.text === message) return;
+
+  appendMessage("user", message);
+  setChatTitleByIntent(message);
+  inputField.value = "";
+  inputField.focus();
+
+  try {
+    const response = await fetch("chat.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: message })
+    });
+    const data = await response.json();
+    appendMessage("bot", data.message || "Error: No message received.");
+  } catch (err) {
+    appendMessage("bot", "Error: " + err.message);
+  }
+}
+
+function appendMessage(sender, text, isHistory = false) {
+  const container = document.getElementById("chatContainer");
+  const msg = document.createElement("div");
+  msg.className = "message " + sender;
+  msg.innerHTML = text.replace(/\n/g, "<br>");
+  container.appendChild(msg);
+
+  // Scroll ke bawah dengan smooth
+  msg.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  if (!isHistory) {
+    if (!chatHistory[chatSessionId]) {
+      chatHistory[chatSessionId] = { title: "", messages: [] };
+    }
+    chatHistory[chatSessionId].messages.push({ sender, text });
+    saveChatHistory(chatSessionId);
+  }
+}
+
+
+
+function saveChatHistory(sessionId) {
+  localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistory));
+  localStorage.setItem(LAST_SESSION_KEY, sessionId);
+  renderChatHistoryList();
+}
+
+function renderChatHistoryList() {
+  const list = document.getElementById("chatHistoryList");
+  list.innerHTML = '';
+
+  Object.entries(chatHistory).forEach(([id, session]) => {
+    const preview = session.messages?.find(m => m.sender === 'user')?.text?.slice(0, 25) || 'Chat';
+    const title = session.title || preview;
+
+    const item = document.createElement("div");
+    item.className = "chat-item";
+
+    const label = document.createElement("span");
+    label.textContent = title;
+    label.style.flex = "1";
+    label.style.cursor = "pointer";
+    label.onclick = () => loadChatSession(id);
+
+    const menuBtn = document.createElement("span");
+    menuBtn.className = "chat-options";
+    menuBtn.textContent = "•••";
+    menuBtn.onclick = (e) => {
+      e.stopPropagation();
+      toggleContextMenu(id, item);
+    };
+
+    item.appendChild(label);
+    item.appendChild(menuBtn);
+    list.appendChild(item);
+  });
+}
+
+function loadChatSession(sessionId) {
+  chatSessionId = sessionId;
+  localStorage.setItem('astrindo_last_session', sessionId); // ✅ Tambahkan ini
+
+  const container = document.getElementById("chatContainer");
+  container.innerHTML = '';
+  (chatHistory[sessionId]?.messages || []).forEach(({ sender, text }) => {
+    appendMessage(sender, text, true);  // ⚠️ 'true' = supaya tidak disimpan ulang
+  });
+}
+
+
+
+function startNewChat() {
+  chatSessionId = Date.now().toString();
+  chatHistory[chatSessionId] = { messages: [] }; // ❌ Tanpa title di awal
+  saveChatHistory(chatSessionId);
+  renderChatHistoryList(); // pastikan sidebar di-refresh
+  document.getElementById("chatContainer").innerHTML = '<div class="message bot">👋 Hello! How can I assist you today?</div>';
+}
+
+
+function toggleContextMenu(sessionId, parentElement) {
+  const existingMenu = parentElement.querySelector(".context-menu");
+  document.querySelectorAll(".context-menu").forEach(el => el.remove());
+  if (existingMenu) return;
+
+  const menu = document.createElement("div");
+  menu.className = "context-menu";
+
+  const createItem = (text, handler) => {
+    const item = document.createElement("div");
+    item.textContent = text;
+    item.onclick = () => {
+      handler();
+      menu.remove();
+    };
+    return item;
+  };
+
+  menu.appendChild(createItem("Rename", () => {
+    const currentTitle = chatHistory[sessionId].title || "this chat";
+    showRenameModal(sessionId, currentTitle);
+  }));
+
+  menu.appendChild(createItem("Delete", () => {
+    const title = chatHistory[sessionId].title || "this chat";
+    showDeleteModal(sessionId, title);
+  }));
+
+  parentElement.appendChild(menu);
+}
+
+function showDeleteModal(sessionId, title) {
+  deleteTargetSessionId = sessionId;
+  document.getElementById('deleteChatName').textContent = title;
+  document.getElementById('deleteModal').style.display = "flex";
+}
+
+function closeDeleteModal() {
+  deleteTargetSessionId = null;
+  document.getElementById('deleteModal').style.display = "none";
+}
+
+function confirmDeleteChat() {
+  if (deleteTargetSessionId) {
+    delete chatHistory[deleteTargetSessionId];
+    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(chatHistory));
+    renderChatHistoryList();
+    if (chatSessionId === deleteTargetSessionId) startNewChat();
+  }
+  closeDeleteModal();
+}
+
+function showRenameModal(sessionId, currentTitle) {
+  renameTargetSessionId = sessionId;
+  document.getElementById("renameInput").value = currentTitle;
+  document.getElementById("renameModal").style.display = "flex";
+}
+
+function closeRenameModal() {
+  renameTargetSessionId = null;
+  document.getElementById("renameModal").style.display = "none";
+}
+
+function confirmRenameChat() {
+  const newName = document.getElementById("renameInput").value.trim();
+  if (newName && renameTargetSessionId) {
+    chatHistory[renameTargetSessionId].title = newName;
+    saveChatHistory(renameTargetSessionId);
+  }
+  closeRenameModal();
+}
+
+function startSearchChat() {
+  const input = document.getElementById("searchInput");
+  input.style.display = input.style.display === "none" ? "block" : "none";
+  input.focus();
+  filterChatHistory();
+}
+
+function filterChatHistory() {
+  const keyword = document.getElementById("searchInput").value.toLowerCase();
+  const list = document.getElementById("chatHistoryList");
+  list.innerHTML = '';
+
+  Object.entries(chatHistory).forEach(([id, session]) => {
+    // ⛔ Skip session kosong tanpa title & tanpa message
+    if (!session || (!session.title && (!Array.isArray(session.messages) || session.messages.length === 0))) return;
+
+    const preview = session.messages?.find(m => m.sender === 'user')?.text?.slice(0, 25) || '';
+    const title = session.title || preview;
+
+    // ✅ Skip kalau tidak ada title/preview
+    if (!title.toLowerCase().includes(keyword)) return;
+
+    const item = document.createElement("div");
+    item.className = "chat-item";
+
+    const label = document.createElement("span");
+    label.textContent = title;
+    label.style.flex = "1";
+    label.style.cursor = "pointer";
+    label.onclick = () => loadChatSession(id);
+
+    const menuBtn = document.createElement("span");
+    menuBtn.className = "chat-options";
+    menuBtn.textContent = "•••";
+    menuBtn.onclick = (e) => {
+      e.stopPropagation();
+      toggleContextMenu(id, item);
+    };
+
+    item.appendChild(label);
+    item.appendChild(menuBtn);
+    list.appendChild(item);
+  });
+}
+
+
+function setChatTitleByIntent(message) {
+  if (chatHistory[chatSessionId]?.title?.length > 0) return;
+
+  const lowerMsg = message.toLowerCase();
+
+  const getYear = () => (message.match(/\b(20\d{2})\b/) || [])[1] || "";
+  const getBrand = () => ["lexar", "sandisk", "asrock", "epos", "intel", "qnap", "asustor", "western digital", "hgst"].find(b => lowerMsg.includes(b)) || "";
+  const getItemCode = () => (message.match(/\b[A-Z]{2,}-[A-Z0-9\-]{3,}\b/) || [])[0] || "";
+  const getCity = () => ["jambi", "riau", "jabar", "banten", "jateng", "babel", "maluku", "kaltara", "malut", "lampung", "sulteng", "sumsel", "sultra", "pabar", "sulbar", "jatim", "kalsel", "sumut", "gorontalo", "bengkulu", "bali", "kaltim", "sumbar", "papua", "NTT", "kalbar", "kepri", "lampung", "sulut"].find(c => lowerMsg.includes(c)) || "";
+  const getMonth = () => {
+  const monthsMap = {
+    januari: "January", febuari: "February", februari: "February", maret: "March", april: "April", mei: "May",
+    juni: "June", juli: "July", augustus: "August", september: "September", oktober: "October", 
+    november: "November", desember: "December",
+    january: "January", february: "February", march: "March", may: "May",
+    june: "June", july: "July", august: "August", october: "October", december: "December"
+  };
+  
+
+  for (const [key, value] of Object.entries(monthsMap)) {
+    if (lowerMsg.includes(key)) return value;
+  }
+  return "";
+};
+
+  const getName = () => {
+      return ["desika", "rina", "puspita", "novia"]
+        .find(name => lowerMsg.includes(name)) || "";
+    };
+
+ 
+
+
+  const keywordMap = [
+    { keywords: ["marketing cost", "biaya marketing", "total cost"], base: "Marketing Cost" },
+    { keywords: ["marketing activity", "activity marketing"], base: "Marketing Summary" },
+    { keywords: ["stock", "inventory", "stok", "acc-"], base: "Marketing Inventory" },
+    { keywords: ["top purchase", "top pembelian request", "banyak purchase request", "banyak request purchase", "purchase requester", "requester purchase"], base: "Top Purchase Requester" },
+    { keywords: ["request atk", "top requester atk", "siapa yang paling banyak request ATK"], base: "Top ATK Requester" },
+    { keywords: ["barang atk", "atk yang paling", "atk apa"], base: "Top ATK Request Item" },
+    { keywords: ["total request", "total purchase", "jumlah request", "jumlah purchase"], base: "Total Request Purchase" },
+    { keywords: ["siapa yang paling sering requ est item finance", "top requester item finance", "paling sering request item finance", "pengaju item finance terbanyak", "top peminta item finance", "user terbanyak item finance"], base: "Top Finance Requester" },
+    { keywords: ["item finance yang paling sering direquest", "top item finance", "item finance paling banyak direquest", "item finance terbanyak", "item finance popular", "frequently requested finance item"], base: "Top Finance Request Item" },
+    { keywords: ["service summary", "layanan", "service", "servis"], base: "Service Summary" },  
+    { keywords: ["vendor"], base: "Vendor Summary" }
+  ];
+
+  let title = "";
+  for (const item of keywordMap) {
+    if (item.keywords.some(k => lowerMsg.includes(k))) {
+      title = item.base;
+      const month = getMonth();
+      const year = getYear();
+      const brand = getBrand();
+      const itemCode = getItemCode();
+      const city = getCity();
+      const name = getName();
+
+      if (month) title += " " + month;
+      if (year) title += " " + year;
+      if(name) title += " - " + name.charAt(0).toUpperCase() + name.slice(1);
+      else if (itemCode) title += " - " + itemCode;
+      else if (brand) title += " - " + brand.toUpperCase();
+      else if (city) title += " - " + city.charAt(0).toUpperCase() + city.slice(1);
+      break;
+    }
+  }
+
+  if (!title) title = message.slice(0, 30);
+  if (!chatHistory[chatSessionId]) chatHistory[chatSessionId] = { title, messages: [] };
+  else chatHistory[chatSessionId].title = title;
+
+  saveChatHistory(chatSessionId);
+}
+
+// Render only chats that have a valid title or at least 1 message
+function renderChatHistoryList() {
+  const list = document.getElementById("chatHistoryList");
+  list.innerHTML = '';
+
+  Object.entries(chatHistory).forEach(([id, session]) => {
+    // ⛔ Skip if session has no title and no messages
+    if (!session || (!session.title && (!Array.isArray(session.messages) || session.messages.length === 0))) return;
+
+    const preview = session.messages?.find(m => m.sender === 'user')?.text?.slice(0, 25) || 'Chat';
+    const title = session.title || preview;
+
+    const item = document.createElement("div");
+    item.className = "chat-item";
+
+    const label = document.createElement("span");
+    label.textContent = title;
+    label.title = title;
+    label.style.flex = "1";
+    label.style.cursor = "pointer";
+    label.onclick = () => loadChatSession(id);
+
+    const menuBtn = document.createElement("span");
+    menuBtn.className = "chat-options";
+    menuBtn.textContent = "•••";
+    menuBtn.onclick = (e) => {
+      e.stopPropagation();
+      toggleContextMenu(id, item);
+    };
+
+    item.appendChild(label);
+    item.appendChild(menuBtn);
+    list.appendChild(item);
+  });
+}
+
+const sessionIds = Object.keys(chatHistory);
+if (sessionIds.includes(chatSessionId)) {
+  const sessionMessages = chatHistory[chatSessionId]?.messages || [];
+
+  if (sessionMessages.length === 0) {
+    document.getElementById("chatContainer").innerHTML = '<div class="message bot">👋 Hello! How can I assist you today?</div>';
+  } else {
+    loadChatSession(chatSessionId);
+  }
+}
+
+
+
+
+renderChatHistoryList();
+
+// Tutup semua context-menu jika klik di luar
+document.addEventListener("click", function (e) {
+  // Loop semua context menu
+  document.querySelectorAll(".context-menu").forEach(menu => {
+    // Kalau klik bukan di dalam context-menu dan bukan tombol •••
+    if (!menu.contains(e.target) && !menu.parentElement.contains(e.target)) {
+      menu.remove();
+    }
+  });
+});
+
+const userIcon = document.querySelector('.user-icon');
+const userDropdown = document.getElementById('userDropdown');
+const userEmailElem = document.getElementById('userEmail');
+const userRoleElem = document.getElementById('userRole');
+
+// Ganti ini dengan sumber dinamis (bisa dari PHP inject JS atau AJAX)
+const userData = {
+  email: "Email: user@example.com",  // 👈 nanti diganti dinamis
+  role: "Product Manager" // 👈 nanti diganti dinamis
+};
+
+userEmailElem.textContent = userData.email;
+userRoleElem.textContent = `Role: ${userData.role}`;
+
+userIcon.addEventListener('click', (e) => {
+  e.stopPropagation();
+  userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+});
+
+document.addEventListener('click', () => {
+  userDropdown.style.display = 'none';
+});
+
+
+</script>
+
+</body>
+</html>
