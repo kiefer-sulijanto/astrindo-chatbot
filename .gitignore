@@ -1,0 +1,18 @@
+# secrets
+.env
+db.php
+
+# logs & debug
+*.log
+debug_*.txt
+nlu_*_log.txt
+
+# dependencies
+vendor/
+node_modules/
+
+# editor/OS junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
