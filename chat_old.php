@@ -8,8 +8,7 @@
 // include("db.php");
 
 // # OpenAI GPT-4o API Call
-// $apiKey = "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";
-// $apiUrl = "https://api.openai.com/v1/chat/completions";
+// $openaiKey = getenv('OPENAI_API_KEY');
 
 // if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 //     http_response_code(405);

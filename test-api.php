@@ -3,7 +3,8 @@
 $ch = curl_init("https://api.openai.com/v1/models");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    "Authorization: Bearer " // <-- Ganti dengan OpenAI API KEY kamu"
+    "$apiKey = getenv('OPENAI_API_KEY');
+ "
 ]);
 $response = curl_exec($ch);
 if (curl_errno($ch)) {

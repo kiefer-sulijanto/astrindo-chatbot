@@ -5,8 +5,7 @@ header("Content-Type: application/json");
 include("db.php");
 include("nlu.php");
 
-$apiKey = "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";  // <-- Ganti dengan OpenAI API KEY kamu
-
+$apiKey = "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";
 $data = json_decode(file_get_contents("php://input"), true);
 $userMessage = $data['message'] ?? '';
 

@@ -7,7 +7,7 @@ function handleMarketingSpecialistCost($conn, $entities) {
     if (!$specialist) {
         return "⚠️ Specialist not specified.";
     }
-
+=
     // Step 1: Lookup actual email from DB based on name fragment
     $likeName = '%' . strtolower($specialist) . '%';
     $stmtEmail = $conn->prepare("
