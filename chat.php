@@ -5,7 +5,7 @@ header("Content-Type: application/json");
 include("db.php");
 include("nlu.php");
 
-$apiKey = "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";
+$apiKey = "YOUR_OPENAI_KEY_HERE";
 $data = json_decode(file_get_contents("php://input"), true);
 $userMessage = $data['message'] ?? '';
 
