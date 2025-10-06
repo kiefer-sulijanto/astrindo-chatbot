@@ -123,7 +123,7 @@
 
 
     .wrapper {
-      height: calc(100vh - 140px); /* 70px header + 70px input kira-kira */
+      height: calc(100vh - 140px); 
       overflow-y: auto;
       overflow-x: hidden;
       padding: 1rem;
@@ -151,8 +151,8 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      padding-right: 8px; /* Memberikan ruang untuk scrollbar */
-      margin-right: -16px; /* Menggeser scrollbar ke kanan */
+      padding-right: 8px; 
+      margin-right: -16px; 
     }
 
 
@@ -292,9 +292,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.6rem 0rem;        /* 👉 Tambahkan padding kiri-kanan */
+      padding: 0.6rem 0rem;        
       margin-bottom: 0.3rem;
-      border-radius: 999px;        /* 👉 Buat seperti pil (bulat penuh) */
+      border-radius: 999px;        
       white-space: nowrap;
       cursor: pointer;
       max-width: 100%;
@@ -310,11 +310,11 @@
       max-width: 100%;
     }
 
-    /* Saat hover baru tampilkan ... */
+    
     .chat-item:hover span {
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 180px; /* bisa kamu sesuaikan */
+      max-width: 180px; 
     }
 
 
@@ -336,7 +336,7 @@
 
     .dropdown-menu {
       position: absolute;
-      top: 60px; /* sesuaikan agar muncul di bawah ikon */
+      top: 60px; 
       right: 10px;
       background: white;
       border: 1px solid #ccc;
@@ -497,7 +497,7 @@ function appendMessage(sender, text, isHistory = false) {
   msg.innerHTML = text.replace(/\n/g, "<br>");
   container.appendChild(msg);
 
-  // Scroll ke bawah dengan smooth
+  
   msg.scrollIntoView({ behavior: "smooth", block: "start" });
 
   if (!isHistory) {
@@ -550,12 +550,12 @@ function renderChatHistoryList() {
 
 function loadChatSession(sessionId) {
   chatSessionId = sessionId;
-  localStorage.setItem('astrindo_last_session', sessionId); // ✅ Tambahkan ini
+  localStorage.setItem('astrindo_last_session', sessionId); 
 
   const container = document.getElementById("chatContainer");
   container.innerHTML = '';
   (chatHistory[sessionId]?.messages || []).forEach(({ sender, text }) => {
-    appendMessage(sender, text, true);  // ⚠️ 'true' = supaya tidak disimpan ulang
+    appendMessage(sender, text, true);  
   });
 }
 
@@ -563,9 +563,9 @@ function loadChatSession(sessionId) {
 
 function startNewChat() {
   chatSessionId = Date.now().toString();
-  chatHistory[chatSessionId] = { messages: [] }; // ❌ Tanpa title di awal
+  chatHistory[chatSessionId] = { messages: [] }; 
   saveChatHistory(chatSessionId);
-  renderChatHistoryList(); // pastikan sidebar di-refresh
+  renderChatHistoryList(); 
   document.getElementById("chatContainer").innerHTML = '<div class="message bot">👋 Hello! How can I assist you today?</div>';
 }
 
@@ -815,7 +815,7 @@ if (sessionIds.includes(chatSessionId)) {
 
 renderChatHistoryList();
 
-// Tutup semua context-menu jika klik di luar
+
 document.addEventListener("click", function (e) {
   // Loop semua context menu
   document.querySelectorAll(".context-menu").forEach(menu => {
@@ -831,10 +831,10 @@ const userDropdown = document.getElementById('userDropdown');
 const userEmailElem = document.getElementById('userEmail');
 const userRoleElem = document.getElementById('userRole');
 
-// Ganti ini dengan sumber dinamis (bisa dari PHP inject JS atau AJAX)
+
 const userData = {
-  email: "Email: user@example.com",  // 👈 nanti diganti dinamis
-  role: "Product Manager" // 👈 nanti diganti dinamis
+  email: "Email: user@example.com",  
+  role: "Product Manager" 
 };
 
 userEmailElem.textContent = userData.email;
