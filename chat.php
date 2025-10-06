@@ -5,7 +5,7 @@ header("Content-Type: application/json");
 include("db.php");
 include("nlu.php");
 
-$apiKey = "YOUR_OPENAI_KEY_HERE";
+$apiKey = "YOUR_OPENAI_KEY_HERE"; // Insert Your OpenAI API Key Here
 $data = json_decode(file_get_contents("php://input"), true);
 $userMessage = $data['message'] ?? '';
 
