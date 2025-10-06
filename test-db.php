@@ -25,7 +25,7 @@ if ($conn) {
         echo "<p>Chat logs table already exists.</p>";
     }
     
-    // List tables in the database
+    // List tables in the databases
     $result = mysqli_query($conn, "SHOW TABLES");
     
     if (mysqli_num_rows($result) > 0) {
