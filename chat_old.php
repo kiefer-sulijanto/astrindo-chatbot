@@ -25,7 +25,7 @@
 // }
 
 // # SECTION 1 : MARKETING
-// # Feature 1 : Tracking Total Marketing Activities and Costs by Marketing Specialists (Universal)
+// # Feature 1 : Tracking Total Marketing Activities and Costs by Marketing Specialist (Universal)
 
 // # *stripos not effective enough, its only for short time because its manual (later use NLU)
 // if (
