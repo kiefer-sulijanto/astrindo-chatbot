@@ -119,7 +119,7 @@ User Message: \"$userMessage\"
         return null;
     }
 
-    // --- Fallback for month from Indonesian words ---
+    // --- Fallback month from Indonesian words ---
     if (!isset($nluData['entities']['month'])) {
         $bulanMap = [
             'januari' => 1, 'februari' => 2, 'maret' => 3, 'april' => 4,
