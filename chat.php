@@ -3,7 +3,7 @@
 // Astrindo Chatbot - chat.php (WITH AI TITLE + BUILD TAG)
 // =====================================================
 
-$BUILD = "chatphp_title_build_2025-12-20_2238";
+$BUILD = "chatphp_title_build";
 
 // --- CORS + Preflight ---
 header("Access-Control-Allow-Origin: *");
