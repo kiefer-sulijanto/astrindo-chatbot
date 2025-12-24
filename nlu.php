@@ -146,6 +146,7 @@ PROMPT;
 /**
  * Local fallback: if AI output is invalid / too generic, derive a simple intent summary.
  * This keeps titles "natural" and not template-y.
+ * Adapt to Indonesian if user say Indonesian, otherwise English.
  */
 function fallbackTitle(string $userMessage): string
 {
