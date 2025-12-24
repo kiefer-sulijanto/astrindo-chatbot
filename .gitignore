@@ -1,0 +1,11 @@
+# Environment variables
+.env
+
+# Personal notes
+notes.txt
+
+# OS junk
+.DS_Store
+
+# Runtime storage
+storage/

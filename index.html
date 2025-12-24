@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Astrindo Digital Approval AI</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Mobile overlay -->
+  <div class="overlay hidden" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar hidden" id="sidebar" aria-hidden="true">
+    <div class="sidebar-header">
+      <h3>Menu</h3>
+      <div class="close-toggle" onclick="toggleSidebar()" title="Toggle sidebar">☰</div>
+    </div>
+
+    <p onclick="startNewChat()" class="sidebar-action">📝 New Chat</p>
+    <p onclick="startSearchChat()" class="sidebar-action">🕵️‍♀️ Search Chat</p>
+
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search chat..."
+      class="search-input"
+      style="display:none;"
+      oninput="filterChatHistory()"
+    />
+
+    <div class="sidebar-scroll">
+      <p class="sidebar-section-title">Chats</p>
+      <div id="chatHistoryList"></div>
+    </div>
+
+    <!-- Resizer handle -->
+    <div class="sidebar-resizer" id="sidebarResizer" title="Drag to resize"></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main collapsed" id="mainContent">
+    <header class="header">
+      <div class="hamburger header-toggle" onclick="toggleSidebar()">☰</div>
+
+      <img
+        src="https://www.astrindo.co.id/astrindo.co.id/astweb/public/visitor/assets/img/logo-ast.png"
+        alt="Astrindo Logo"
+        class="logo-astrindo"
+        onclick="startNewChat()"
+        style="cursor:pointer;"
+      />
+
+      <span class="header-title"><strong>Astrindo Digital Approval</strong></span>
+
+      <img src="/astrindo-chatbot/public/user-icon.png" alt="User Icon" class="user-icon">
+
+      <div id="userDropdown" class="dropdown-menu" style="display:none;">
+        <div class="dropdown-item" id="userEmail"></div>
+        <div class="dropdown-item" id="userRole"></div>
+      </div>
+    </header>
+
+    <!-- CHAT AREA -->
+    <section class="chat-area">
+      <div class="chat-container" id="chatContainer">
+        <div class="message bot">👋 Hello! How can I assist you today?</div>
+      </div>
+    </section>
+
+    <!-- INPUT -->
+    <footer class="input-container">
+      <div class="input-inner">
+        <input type="text" id="userInput" placeholder="Type your message..." autofocus />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </footer>
+  </main>
+
+  <!-- DELETE MODAL -->
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <h3>Delete chat?</h3>
+      <p>This will delete <strong id="deleteChatName">this chat</strong>.</p>
+      <p style="font-size: 0.85rem; color: #aaa;">Note : You won't be able to see this chat anymore.</p>
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
+        <button onclick="closeDeleteModal()" style="background:#444; color:white;">Cancel</button>
+        <button onclick="confirmDeleteChat()" style="background:#d93025; color:white;">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RENAME MODAL -->
+  <div id="renameModal" class="modal">
+    <div class="modal-content">
+      <h3>Rename chat</h3>
+      <input type="text" id="renameInput" />
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:1.5rem;">
+        <button onclick="closeRenameModal()" style="background:#444; color:white;">Cancel</button>
+        <button onclick="confirmRenameChat()" style="background:white; color:black;">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js?v=20251220"></script>
+</body>
+</html>
