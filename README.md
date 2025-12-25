@@ -93,3 +93,50 @@ astrindo-chatbot/
 │
 ├── logs/                 # Error and execution logs
 └── README.md
+
+```
+
+---
+
+## Technology Stack
+
+| Layer | Technology |
+|------|-----------|
+| Backend | PHP (Native) |
+| Database | MySQL |
+| AI / NLU | OpenAI API |
+| Server | Apache (XAMPP / Laragon) |
+| Architecture | Modular NLU-Based Design |
+| Output | Structured Text & JSON Responses |
+
+---
+
+## NLU & Intent Handling Strategy
+
+Unlike traditional rule-based chatbots that rely on keyword matching, this system adopts an **AI-driven Natural Language Understanding (NLU)** approach to interpret user intent and context.
+
+Key characteristics of the intent handling strategy include:
+- Large Language Model (LLM)-based intent classification  
+- Dynamic entity extraction (e.g. date, department, cost, personnel)  
+- Context preservation across multiple conversational turns  
+- Flexible handling of ambiguous or incomplete queries  
+
+This enables natural interactions such as follow-up questions without requiring users to repeat information.
+
+---
+
+## Setup and Installation
+
+### Prerequisites
+
+- PHP 8.0 or higher  
+- MySQL Database  
+- Apache Server (XAMPP or Laragon)  
+- OpenAI API Key  
+
+### Installation Steps
+
+1. Clone the repository:
+```bash
+git clone https://github.com/kiefer-sulijanto/astrindo-chatbot.git
+
