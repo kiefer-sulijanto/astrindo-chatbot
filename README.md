@@ -139,4 +139,16 @@ This enables natural interactions such as follow-up questions without requiring 
 1. Clone the repository:
 ```bash
 git clone https://github.com/kiefer-sulijanto/astrindo-chatbot.git
+```
+2. Configure the database connection in db.php:
+```bash
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "digitalapproval";
+```
+3. Create environment configuration in config/env.php
+```bash
+define('OPENAI_API_KEY', 'your_openai_api_key_here');
+```
 
